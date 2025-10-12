@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import Header from "@/components/Header";
+import { auth } from "@clerk/nextjs/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,17 +20,23 @@ export const metadata: Metadata = {
   description: "AI Room Interior Designer",
 };
 
-export default function RootLayout({
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isAuthenticated } = await auth();
+
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header isAuthenticated={isAuthenticated} />
+          {children}
+        </Providers>
       </body>
     </html>
   );
